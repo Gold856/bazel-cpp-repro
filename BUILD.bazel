@@ -1,0 +1,33 @@
+load("@pybind11_bazel//:build_defs.bzl", "PYBIND_COPTS", "PYBIND_FEATURES")
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_shared_library.bzl", "cc_shared_library")
+
+cc_library(
+    name = "lib1",
+    srcs = ["lib1.cpp"],
+    hdrs = ["lib1.hpp"],
+    deps = [
+    ],
+)
+
+cc_shared_library(
+    name = "lib1_shared",
+    deps = [
+        ":lib1",
+    ],
+)
+
+cc_binary(
+    name = "lib2",
+    srcs = ["lib2.cpp"],
+    copts = PYBIND_COPTS,
+    features = PYBIND_FEATURES,
+    linkshared = 1,
+    deps = [
+        ":lib1",
+        "@rules_python//python/cc:current_py_cc_headers",
+    ],
+    # Uncomment this next line to break the build
+    dynamic_deps = [":lib1_shared"]
+)
